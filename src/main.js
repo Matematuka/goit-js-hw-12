@@ -1,7 +1,6 @@
-import iziToast from 'izitoast';
-import 'izitoast/dist/css/iziToast.min.css';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
+import error from './js/error.js';
 import {
   hideLoader,
   hideLoadMore,
@@ -34,60 +33,28 @@ async function searchImage(evt) {
   hideLoadMore();
   try {
     if (image === '') {
-      iziToast.show({
-        title: 'Error',
-        message: 'Please enter a search term to begin your search.',
-        titleSize: '16px',
-        titleLineHeight: '150%',
-        messageSize: '16px',
-        messageLineHeight: '150%',
-        backgroundColor: '#ef4040',
-        position: 'bottomRight',
-      });
+      error.emptySearch();
       return;
     }
     showLoader();
     currentQuery = image;
     currentPage = 1;
-
     const data = await getImage(currentQuery, currentPage);
-
     if (data.totalHits > 0) {
       const markup = data.hits.map(imageTemplate).join('\n\n');
       pictures.insertAdjacentHTML('beforeend', markup);
       const element = pictures.firstElementChild.getBoundingClientRect();
       window.scrollBy({ top: element.height, behavior: 'smooth' });
-      console.log(element.height);
       gallery.refresh();
       showLoadMore();
       form.reset();
-
       availablePages = Math.ceil(data.totalHits / 15);
     } else {
       pictures.innerHTML = '';
-      iziToast.show({
-        title: 'Error',
-        message:
-          'There are no images matching your search query. Please try again!',
-        titleSize: '16px',
-        titleLineHeight: '150%',
-        messageSize: '16px',
-        messageLineHeight: '150%',
-        backgroundColor: '#ef4040',
-        position: 'bottomRight',
-      });
+      error.noImages();
     }
   } catch (err) {
-    iziToast.show({
-      title: 'Error',
-      message: err.message,
-      titleSize: '16px',
-      titleLineHeight: '150%',
-      messageSize: '16px',
-      messageLineHeight: '150%',
-      backgroundColor: '#ef4040',
-      position: 'bottomRight',
-    });
+    error.errorMessage();
   } finally {
     hideLoader();
   }
@@ -104,29 +71,11 @@ async function loadMore() {
     window.scrollBy({ top: element.height, behavior: 'smooth' });
     gallery.refresh();
     if (currentPage === availablePages) {
-      iziToast.show({
-        title: 'Error',
-        message: "We're sorry, but you've reached the end of search results.",
-        titleSize: '16px',
-        titleLineHeight: '150%',
-        messageSize: '16px',
-        messageLineHeight: '150%',
-        backgroundColor: '#ef4040',
-        position: 'bottomRight',
-      });
+      error.endOfSearch();
       hideLoadMore();
     }
   } catch (err) {
-    iziToast.show({
-      title: 'Error',
-      message: err.message,
-      titleSize: '16px',
-      titleLineHeight: '150%',
-      messageSize: '16px',
-      messageLineHeight: '150%',
-      backgroundColor: '#ef4040',
-      position: 'bottomRight',
-    });
+    error.errorMessage();
   } finally {
     hideLoader();
   }
