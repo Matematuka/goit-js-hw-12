@@ -32,6 +32,11 @@ section{
   display: flex;
   gap: 8px;
   justify-content: center;
+  align-items: center;
+  background-image: linear-gradient(to left,
+  rgba(85, 112, 234, 0.804), 
+    rgba(237, 245, 7, 0.885),
+    rgba(85, 112, 234, 0.804));
 }
 
 input {
@@ -58,7 +63,7 @@ input::placeholder {
 }
 
 input:hover {
-  border: 1px solid #000;
+  border: 1px solid #000000;
 }
 
 input:focus {
